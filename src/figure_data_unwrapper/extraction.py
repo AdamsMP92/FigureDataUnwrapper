@@ -1,6 +1,6 @@
 """Color-selected pixel clouds calibrated using already validated tick values."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import math
 
 from matplotlib.colors import to_rgb
@@ -9,6 +9,7 @@ from numpy.typing import ArrayLike
 
 from .frame import FrameDetection
 from .preprocessing import _normalized_image
+from .rectangle import Rectangle
 from .ticks import TickGridDetection
 
 
@@ -78,6 +79,7 @@ class ColorPointCloud:
     matched_pixel_count: int
     component_count: int
     notes: tuple[str, ...]
+    excluded_regions: tuple[Rectangle, ...] = ()
 
     def __iter__(self):
         yield self.x
@@ -226,6 +228,7 @@ def _components(mask):
 def extract_color_data(
     analysis, color, *, color_tolerance: float = 0.2, components: str = "all",
     frame_margin: float = 4., tick_sigma_px: float = 1 / math.sqrt(12),
+    exclude_regions=(), max_channel_spread: float | None = None,
 ) -> ColorPointCloud:
     """Select original-RGB pixels inside an analyzed frame and calibrate them.
 
@@ -241,6 +244,9 @@ def extract_color_data(
     recognition; same-color touching objects remain inseparable. frame_margin
     excludes border strips in pixels. No centerline, resampling or interpolation
     is applied. eps includes calibration covariance only, separately for x/y.
+    exclude_regions masks known annotation rectangles in source pixels.
+    max_channel_spread optionally restricts max(R,G,B)-min(R,G,B), useful for
+    selecting neutral gray antialiasing shades of black curves.
     """
     tolerance = _positive_number(color_tolerance, "color_tolerance", allow_zero=True)
     margin = _positive_number(frame_margin, "frame_margin", allow_zero=True)
@@ -248,6 +254,13 @@ def extract_color_data(
         raise ValueError("color_tolerance must not exceed the RGB cube diagonal sqrt(3).")
     if components not in ("all", "largest"):
         raise ValueError("components must be 'all' or 'largest'.")
+    exclusions = tuple(exclude_regions)
+    if any(not isinstance(region, Rectangle) for region in exclusions):
+        raise ValueError("exclude_regions must contain source-pixel Rectangles.")
+    if max_channel_spread is not None:
+        max_channel_spread = _positive_number(max_channel_spread, "max_channel_spread", allow_zero=True)
+        if max_channel_spread > 1:
+            raise ValueError("max_channel_spread must be in [0, 1].")
     rgb, frame, ticks = _analysis_parts(analysis)
     calibration = calibrate_axes(ticks, tick_sigma_px=tick_sigma_px)
     target = _color_rgb(color)
@@ -258,10 +271,17 @@ def extract_color_data(
     columns, rows = np.arange(rgb.shape[1]), np.arange(rgb.shape[0])
     mask &= ((columns > r.left + margin) & (columns < r.right - margin))[None, :]
     mask &= ((rows > r.top + margin) & (rows < r.bottom - margin))[:, None]
+    for region in exclusions:
+        mask &= ~(((columns >= region.left) & (columns <= region.right))[None, :]
+                  & ((rows >= region.top) & (rows <= region.bottom))[:, None])
+    if max_channel_spread is not None:
+        mask &= np.ptp(rgb, axis=2) <= max_channel_spread
     pixel_y, pixel_x = np.nonzero(mask)
     matched = len(pixel_x)
     labels, count, largest = _components(mask)
     notes = list(calibration.notes)
+    if exclusions:
+        notes.append(f"Applied {len(exclusions)} explicit source-pixel exclusion regions.")
     if components == "largest" and largest is not None:
         keep = labels == largest
         pixel_x, pixel_y = pixel_x[keep], pixel_y[keep]
@@ -273,4 +293,53 @@ def extract_color_data(
     y, eps_y = calibration.y.transform(pixel_y)
     return ColorPointCloud(x, y, np.column_stack((eps_x, eps_y)),
                            np.column_stack((pixel_x, pixel_y)), tuple(float(v) for v in target),
-                           tolerance, frame, calibration, rgb.shape[:2], matched, count, tuple(notes))
+                           tolerance, frame, calibration, rgb.shape[:2], matched, count, tuple(notes), exclusions)
+
+
+def split_two_curves(
+    cloud: ColorPointCloud, *, min_separation_px: float = 10., max_anchor_gap_px: float = 80.,
+) -> tuple[ColorPointCloud, ColorPointCloud]:
+    """Partition visible pixels of two noncrossing curves by vertical order.
+
+    Assumes annotation/frame pixels have already been excluded and each curve
+    has at most one narrow vertical band per column. Columns showing two bands
+    separated by min_separation_px anchor a dividing boundary. Interpolate this
+    boundary across missing anchor columns, bounded by max_anchor_gap_px. Only
+    the assignment boundary is interpolated: every output point is an unchanged
+    member of the input cloud. No curve pixels are filled or reconstructed.
+
+    Return upper/lower in source image coordinates, independently of axis scale.
+    Crossing curves and ambiguous extra bands need a different association model.
+    """
+    if not isinstance(cloud, ColorPointCloud):
+        raise TypeError("cloud must be a ColorPointCloud.")
+    separation = _positive_number(min_separation_px, "min_separation_px")
+    gap_limit = _positive_number(max_anchor_gap_px, "max_anchor_gap_px")
+    if not len(cloud.pixels):
+        raise ValueError("Cannot separate an empty cloud.")
+    pixel_x, pixel_y = cloud.pixels.T
+    anchors = []
+    for column in np.unique(pixel_x):
+        rows = np.sort(pixel_y[pixel_x == column])
+        gaps = np.diff(rows)
+        split = np.flatnonzero(gaps >= separation)
+        if len(split) > 1:
+            raise ValueError("More than two vertical bands found; exclude annotations or revise the separation threshold.")
+        if len(split) == 1:
+            i = split[0]
+            anchors.append((column, .5 * (rows[i] + rows[i + 1])))
+    if len(anchors) < 3:
+        raise ValueError("At least three columns with two distinct bands are required.")
+    anchor_x, boundary_y = np.array(anchors).T
+    if (np.max(np.diff(anchor_x)) > gap_limit or anchor_x[0] - pixel_x.min() > gap_limit
+            or pixel_x.max() - anchor_x[-1] > gap_limit):
+        raise ValueError("Curve association would cross an unsupported anchor gap; increase max_anchor_gap_px explicitly if justified.")
+    boundary = np.interp(pixel_x, anchor_x, boundary_y)
+    upper = pixel_y < boundary
+    result = []
+    for name, keep in (("upper", upper), ("lower", ~upper)):
+        note = (f"{name}: vertical-order assignment from {len(anchors)} two-band columns; "
+                "only the dividing boundary was interpolated, not the curve data.")
+        result.append(replace(cloud, x=cloud.x[keep], y=cloud.y[keep], eps=cloud.eps[keep],
+                              pixels=cloud.pixels[keep], notes=(*cloud.notes, note)))
+    return tuple(result)

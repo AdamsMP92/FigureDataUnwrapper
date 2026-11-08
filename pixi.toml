@@ -21,7 +21,10 @@ binarization-trial = "python examples/binarization_trial.py"
 detect-ticks = { cmd = "python examples/detect_ticks.py", depends-on = ["generate-example"] }
 rank-colors = { cmd = "python examples/rank_colors.py", depends-on = ["generate-example"] }
 check-parabola = { depends-on = ["example"] }
+extract-parabola-markers = "python examples/parabola/parabola_markers.py"
 check-real-example1 = "python examples/real_example_1/real_example1_check.py"
 check-real-example2 = "python examples/real_example_2/real_example2_check.py"
+remove-real-example2-colors = "python examples/real_example_2/real_example2_remove_colors.py"
+extract-real-example2-black = "python examples/real_example_2/real_example2_black_curves.py"
 extract-real-example1-red = "python examples/real_example_1/real_example1_red.py"
 extract-real-example1-markers = "python examples/real_example_1/real_example1_markers.py"

@@ -8,6 +8,7 @@ import numpy as np
 from numpy.typing import ArrayLike
 
 from .colors import ColorCount
+from .color_cleanup import ColorRemoval
 from .extraction import ColorPointCloud, _analysis_parts
 from .markers import MarkerPointCloud
 from .frame import FrameDetection
@@ -296,6 +297,88 @@ def plot_marker_data(analysis, cloud: MarkerPointCloud, *, output: str | Path = 
         calibrated.set(title="Calibrated marker centers", xlabel="x (axis units)", ylabel="y (axis units)")
         calibrated.grid(alpha=.2)
         figure.suptitle("Reference-template hypotheses; error bars show calibration uncertainty only", fontsize=10)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        figure.savefig(path, format="png")
+    finally:
+        figure.clear()
+    return path
+
+
+def plot_color_removal(image: ArrayLike, removal: ColorRemoval, *, output: str | Path = "color_removal.png") -> Path:
+    """Compare original, cleaned copy and the exact removed-pixel mask."""
+    rgb = _display_rgb(image)
+    if not isinstance(removal, ColorRemoval):
+        raise TypeError("removal must be a ColorRemoval result.")
+    if rgb.shape != removal.image.shape or removal.mask.shape != rgb.shape[:2]:
+        raise ValueError("Original and color-removal result describe different image geometry.")
+    path = Path(output)
+    if path.suffix.lower() != ".png":
+        raise ValueError("The color-removal plot output must have a .png extension.")
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    from matplotlib.figure import Figure
+
+    figure = Figure(figsize=(13.5, 6), dpi=150, layout="constrained")
+    FigureCanvasAgg(figure)
+    try:
+        original, cleaned, mask = figure.subplots(1, 3)
+        original.imshow(rgb, origin="upper", interpolation="nearest")
+        cleaned.imshow(removal.image, origin="upper", interpolation="nearest")
+        mask.imshow(removal.mask, origin="upper", cmap="gray", vmin=0, vmax=1, interpolation="nearest")
+        for axes, title in ((original, "Original"), (cleaned, "Selected colors replaced by background"),
+                            (mask, f"White = removed: {removal.removed_pixels:,} pixels")):
+            axes.set_title(title, fontsize=10)
+            axes.set_axis_off()
+        figure.suptitle("Removed regions remain unknown; covered curve segments are not reconstructed", fontsize=10)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        figure.savefig(path, format="png")
+    finally:
+        figure.clear()
+    return path
+
+
+def plot_color_curves(analysis, clouds: Sequence[ColorPointCloud], *, output: str | Path = "curves.png") -> Path:
+    """Compare separate original-pixel clouds on the source and calibrated axes."""
+    rgb, frame, _ = _analysis_parts(analysis)
+    clouds = tuple(clouds)
+    if not clouds or any(not isinstance(cloud, ColorPointCloud) for cloud in clouds):
+        raise ValueError("Supply one or more ColorPointCloud results.")
+    if any(cloud.image_shape != rgb.shape[:2] or cloud.frame.rectangle != frame.rectangle for cloud in clouds):
+        raise ValueError("Clouds and analysis describe different image geometry.")
+    path = Path(output)
+    if path.suffix.lower() != ".png":
+        raise ValueError("The curve plot output must have a .png extension.")
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    from matplotlib.figure import Figure
+    from matplotlib.patches import Rectangle as RectanglePatch
+
+    figure = Figure(figsize=(12, 6), dpi=150, layout="constrained")
+    FigureCanvasAgg(figure)
+    try:
+        source, calibrated = figure.subplots(1, 2)
+        source.imshow(rgb, origin="upper", interpolation="nearest")
+        palette = ("#e87500", "#00a6b2", "#a02bc4", "#3b8c28")
+        for i, cloud in enumerate(clouds):
+            color = palette[i % len(palette)]
+            label = f"Curve {i + 1}: {len(cloud.x):,} pixels"
+            source.scatter(cloud.pixels[:, 0], cloud.pixels[:, 1], s=.5, color=color, linewidths=0)
+            calibrated.scatter(cloud.x, cloud.y, s=.7, color=color, linewidths=0, label=label)
+        for region in dict.fromkeys(region for cloud in clouds for region in cloud.excluded_regions):
+            source.add_patch(RectanglePatch((region.left, region.top), region.width, region.height,
+                                            fill=False, edgecolor="#da9100", linestyle="--", linewidth=.8))
+        source.set(title="Selected original pixels; dashed boxes = explicit exclusions")
+        source.set_axis_off()
+        calibration = clouds[0].calibration
+        if calibration.x.scale == "log":
+            calibrated.set_xscale("log")
+        if calibration.y.scale == "log":
+            calibrated.set_yscale("log")
+        r = frame.rectangle
+        calibrated.set_xlim(calibration.x.transform([r.left, r.right])[0])
+        calibrated.set_ylim(calibration.y.transform([r.bottom, r.top])[0])
+        calibrated.set(title="Separate calibrated pixel clouds", xlabel="x (axis units)", ylabel="y (axis units)")
+        calibrated.grid(alpha=.2)
+        calibrated.legend(fontsize=8)
+        figure.suptitle("Visible pixels only; gaps are retained and CSV eps describes calibration uncertainty", fontsize=10)
         path.parent.mkdir(parents=True, exist_ok=True)
         figure.savefig(path, format="png")
     finally:

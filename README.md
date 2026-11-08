@@ -338,6 +338,46 @@ pixi run rank-colors path/to/figure.png --n-colors 20
 The example prints the tuples directly. Matplotlib loads PNGs as normalized
 floating arrays, so their RGB values are printed on the 0–1 scale.
 
+## Removing approximate colors
+
+`remove_colors` replaces selected color families by the estimated background
+in a copy of the source, and retains a boolean mask of the discarded pixels:
+
+```python
+from figure_data_unwrapper import remove_colors, plot_color_removal
+
+removal = remove_colors(image, ["red", "blue"], hue_tolerance=18)
+cleaned_image, removed_mask = removal
+plot_color_removal(image, removal, output="color_removal.png")
+```
+
+The default `mode="hue"` compares circular HSV hue, so dark/light shades and
+antialiasing mixtures can match without requiring an exact RGB triple.
+`hue_tolerance=15` is in degrees; `min_saturation=0.1` protects neutral black,
+gray and white pixels. Lower saturation thresholds include paler color fringes.
+Background-near pixels are additionally protected by `min_contrast=0.03`.
+For achromatic targets, choose `mode="rgb"` and set `rgb_tolerance` (Euclidean
+distance in normalized RGB). Targets accept names, hex strings, integer RGB
+`[0,255]`, floating RGB `[0,1]`, or sequences of these.
+
+The median image perimeter estimates a uniform page background;
+`background_color` overrides it. Integer, float, grayscale and RGBA inputs are
+supported. RGBA is composited over white, and output is always normalized RGB.
+The original array is untouched. `mask=True` marks removed/unknown content;
+`removed_pixels` counts the union, while `counts` reports each target separately.
+Removing an overlay does not reconstruct a covered curve segment.
+
+```sh
+pixi run remove-real-example2-colors
+```
+
+`examples/real_example_2/real_example2_remove_colors.py` writes the cleaned PNG,
+`real_example2_removed_mask.png` (white = removed), and a three-panel comparison
+`real_example2_color_removal.png`. With the current settings it removes 390,530
+pixels, including red/blue content in the insets. All exactly neutral grayscale
+pixels retain their original values. Keep frame/tick calibration from the
+original analysis when subsequently extracting from the cleaned copy.
+
 ## Color-selected calibrated pixel clouds
 
 `extract_color_data` directly accepts the four-part return value from
@@ -416,12 +456,55 @@ The current extraction keeps
 971-pixel legend stroke. Its approximate calibration uncertainties range from
 0.053 to 0.101 x-axis units and 0.0041 to 0.0065 y-axis units.
 
+For known annotations, `exclude_regions` accepts source-pixel `Rectangle`
+objects. `max_channel_spread` optionally restricts `max(R,G,B)-min(R,G,B)`;
+this helps select neutral gray antialiasing shades of black curves while
+rejecting dark colored pixels. Applied exclusions are retained in the cloud.
+
+## Two black curves in paper example2
+
+```sh
+pixi run extract-real-example2-black
+```
+
+`examples/real_example_2/real_example2_black_curves.py` first removes red/blue
+content, then selects neutral dark pixels using `color_tolerance=1.0` and
+`max_channel_spread=0.08`. The broad RGB tolerance includes the many gray shades
+of the rasterized lines. A 35-pixel frame margin excludes inward ticks, and two
+explicit rectangles exclude the insets; neither exclusion is inferred.
+
+`split_two_curves` partitions this cloud by vertical order. Columns with two
+distinct bands anchor a dividing boundary. That boundary is interpolated across
+missing anchors, bounded by `max_anchor_gap_px`; curve values are never
+interpolated. The current example requires a 40-pixel band separation and permits
+at most an 80-pixel anchor gap. Extra bands, insufficient anchors or unsupported
+gaps raise an error rather than forcing a two-curve assignment. The method
+assumes two noncrossing, narrow bands in each image column; crossing curves need
+a different association model.
+
+The outputs `real_example2_black_upper.csv` and `real_example2_black_lower.csv`
+contain 4,039 and 4,000 source pixels, respectively, each with columns
+`x,y,eps_x,eps_y,pixel_x,pixel_y`. They reuse the original log-log calibration;
+the lower series retains its values as plotted (no correction of the caption's
+factor 0.5 is inferred). `eps` remains calibration uncertainty only.
+`real_example2_black_curves.png`, created by `plot_color_curves`, shows both
+clouds in distinct display colors and outlines the explicit inset exclusions.
+Gaps caused by overdraw or selection remain visible.
+
 ## Reference-marker extraction
 
 `extract_markers` complements the continuous color-pixel extractor: it returns
 one calibrated center per **marker hypothesis**, using a cropped reference PNG.
 It accepts the same four-part pre-analysis and reuses its unique numerical tick
 mappings. The reference should contain one clean marker with background margins.
+
+The minimal synthetic example is `examples/parabola/parabola_markers.py`.
+It reuses the calibrated `parabola_check.py` analysis and `blue_marker.png`, then
+saves `parabola_markers.csv` and `parabola_markers.png` alongside the input:
+
+```sh
+pixi run extract-parabola-markers
+```
 
 ```python
 from pathlib import Path
