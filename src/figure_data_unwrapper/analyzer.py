@@ -8,6 +8,7 @@ from numpy.typing import ArrayLike
 
 from .colors import ColorCount, rank_colors
 from .frame import FrameDetection, fit_frame
+from .frame_colors import check_frame_colors
 from .plotting import plot_check
 from .preprocessing import foreground_mask
 from .ticks import TickGridDetection, detect_ticks_and_grid
@@ -36,6 +37,10 @@ def pre_analyzer(
     Integer rasters such as JPEGs are normalized before extraction. PNG floats
     retain their original values. A failed frame fit returns None for frame and
     ticks while still ranking colors and saving the image with a status note.
+    Each candidate side is checked independently in original RGB before ticks
+    and grid are extracted. frame.color_check records corrections and unresolved
+    changes; suspect/rejected candidates remain available for diagnosis but
+    return None for ticks.
 
     By default the check plot is saved beside the input as <stem>_check.png.
     output overrides its location; the source image cannot be overwritten.
@@ -59,12 +64,12 @@ def pre_analyzer(
     image = imread(input_path)
     if np.issubdtype(image.dtype, np.integer):
         image = image.astype(np.float64) / np.iinfo(image.dtype).max
-    frame = fit_frame(foreground_mask(image))
+    frame = check_frame_colors(image, fit_frame(foreground_mask(image)))
     ticks = detect_ticks_and_grid(
         image, frame=frame,
         expected_x_ticks=None if x_ticks is not None or x_lin or x_log else expected_x_ticks,
         expected_y_ticks=None if y_ticks is not None or y_lin or y_log else expected_y_ticks,
-    ) if frame is not None else None
+    ) if frame is not None and frame.color_check.status not in ("suspect", "rejected") else None
     ticks = check_tick_consistency(
         ticks, x_ticks=x_ticks, y_ticks=y_ticks,
         x_lin=x_lin, y_lin=y_lin, x_log=x_log, y_log=y_log,

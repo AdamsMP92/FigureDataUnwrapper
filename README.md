@@ -43,8 +43,9 @@ The image returned by the wrapper is normalized to 0–1, including integer JPEG
 input. It preserves the four-part return tuple and writes `<stem>_check.png`
 beside the input by default. Optional `output`, `expected_x_ticks`,
 `expected_y_ticks`, and `show_ticks` keywords customize the destination, count
-hints, and overlay. If frame reconstruction fails, frame and ticks are None;
-the color ranking and diagnostic PNG are still produced.
+hints, and overlay. If geometric frame reconstruction fails, frame and ticks are
+None. Unresolved RGB checks retain the candidate frame and its diagnostics but
+skip tick/grid extraction. Color ranking and the diagnostic PNG are still produced.
 
 The shared exporter is `plot_check` in `src/figure_data_unwrapper/plotting.py`.
 The original occupies the upper-left region at its native pixel resolution.
@@ -146,10 +147,11 @@ the interior stays empty. Bounds refer to geometric centerlines, not array slice
 ## Binarization and frame extraction
 
 ```python
-from figure_data_unwrapper import detect_frame, fit_frame, foreground_mask
+from figure_data_unwrapper import check_frame_colors, detect_frame, fit_frame, foreground_mask
 
 mask = foreground_mask(image, min_contrast=0.03)
 result = fit_frame(mask)
+result = check_frame_colors(image, result)
 if result is not None:
     print(result.rectangle)
     print(result.visible_sides)   # supported by finite line segments
@@ -195,6 +197,49 @@ spines need not describe the original plot extent. Grid lines can also supply
 geometric evidence; detected sides describe line support, not semantic labels.
 A frame alone does not calibrate data coordinates or their origin.
 
+## Original-color frame consistency
+
+After binary geometry proposes a frame, `check_frame_colors(image, result)`
+walks each straight side in the original RGB image. Every side has its own
+dominant color: a black left side, white right side and colored horizontal
+sides are allowed. Corner pixels are excluded from these independent paths.
+RGB/RGBA and grayscale are supported; reported colors are normalized to 0–1.
+
+By default, channel differences up to `color_tolerance=0.1` are tolerated.
+Short deviations of up to `max(3, ceil(1% of the path length))` pixels are allowed;
+`max_interruption_px` can override this. An internal A–B–A deviation may also
+represent an occlusion if it occupies at most 20% of the path and at least 75%
+of the path retains the dominant color. Longer endpoint changes or persistent
+internal changes on a supported stroke are suspicious. These rules are
+heuristics for antialiasing, crossings and occlusions, not semantic proof.
+
+Uniform color alone does not establish a line. Transverse RGB probes must also
+support a narrow stroke over at least 75% of the side. This distinguishes smooth
+shading or uniform background from a real stroke and supports white strokes
+against a darker background. A white side on white background remains inferred
+because the pixels cannot establish that it exists.
+
+Endpoint color transitions nominate nearby perpendicular frame boundaries for
+correction. The proposed boundary must itself have a consistent full-length
+stroke and improve the complete frame without invalidating good sides.
+Corrections stay within `max(4 pixels, search_fraction * initial span)`, with
+`search_fraction=0.1` by default. Missing sides alone do not trigger a search,
+which prevents arbitrary interior grid lines from being promoted to frame sides.
+Set `correct=False` to inspect the candidate without changing its coordinates.
+
+`frame.color_check` records the original rectangle, original and final per-side
+colors, color-change intervals with allowed/rejected reasons, jump positions,
+stroke support and notes. Its status is `valid`, `partial`, `suspect` or
+`rejected`. Partial frames retain inferred sides; unresolved suspicious changes
+prevent subsequent tick/grid extraction. `fit_frame` remains the binary-only
+stage; `pre_analyzer`, `detect_frame` and automatic `detect_ticks_and_grid` use
+the RGB check. Check plots report its status and any boundary correction.
+
+For `examples/real_example2.png`, the gray upper page shadow originally extended
+the proposed frame to row 0. RGB transitions on the vertical sides identify the
+actual upper spine around row 27. Correction removes the shadow band from the
+plot interior, so it no longer appears as a spurious grid line.
+
 ## Ticks and grid lines
 
 ```python
@@ -210,7 +255,8 @@ if result is not None:
 guided = detect_ticks_and_grid(image, expected_x_ticks=7, expected_y_ticks=5)
 ```
 
-The function reconstructs a frame first and returns None if that fails.
+The function reconstructs and color-checks a frame first and returns None if
+that fails or leaves unresolved color inconsistencies.
 To reuse an existing successful reconstruction, pass a FrameDetection from
 `fit_frame` as `frame=frame_result`. Its bounds must belong to the input image.
 Detection searches along the four frame sides for perpendicular branches.

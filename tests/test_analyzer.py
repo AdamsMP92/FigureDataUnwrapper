@@ -96,3 +96,13 @@ class PreAnalyzerTests(unittest.TestCase):
         pixels = imread(self.output)[:831, :1355, :3]
         purple = (pixels[..., 0] > 0.5) & (pixels[..., 1] < 0.3) & (pixels[..., 2] > 0.6)
         self.assertTrue(purple.any())
+
+    def test_rgb_correction_precedes_grid_search_for_shadowed_paper(self):
+        paper = Path(__file__).resolve().parents[1] / "examples" / "real_example2.png"
+        _, frame, ticks, _ = pre_analyzer(paper, n_colors=3, output=self.output)
+        self.assertTrue(frame.color_check.corrected)
+        self.assertAlmostEqual(frame.rectangle.top, 27, delta=1)
+        self.assertEqual(frame.color_check.status, "valid")
+        self.assertIs(ticks.frame, frame)
+        self.assertEqual(ticks.horizontal_grid, ())
+        self.assertEqual(ticks.vertical_grid, ())

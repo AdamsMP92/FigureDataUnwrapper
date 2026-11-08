@@ -14,11 +14,54 @@ _SIDES = ("left", "top", "right", "bottom")
 
 
 @dataclass(frozen=True)
+class FrameColorChange:
+    """A different-color interval along one side, in tangential pixel coordinates."""
+
+    start: float
+    end: float
+    color: tuple[float, float, float]
+    allowed: bool
+    reason: str
+
+
+@dataclass(frozen=True)
+class FrameEdgeColor:
+    """Original-RGB evidence for one side; colors are never shared across sides."""
+
+    side: str
+    coordinate: float
+    color: tuple[float, float, float]
+    consistent_fraction: float
+    stroke_fraction: float
+    stroke_strength: float
+    status: str
+    changes: tuple[FrameColorChange, ...] = ()
+    jump_positions: tuple[float, ...] = ()
+
+    @property
+    def plausible(self) -> bool:
+        return self.status in ("valid", "interrupted")
+
+
+@dataclass(frozen=True)
+class FrameColorValidation:
+    """Independent side checks before/after refinement, with normalized RGB."""
+
+    original_rectangle: Rectangle
+    original_edges: tuple[FrameEdgeColor, ...]
+    edges: tuple[FrameEdgeColor, ...]
+    corrected: bool
+    status: str
+    notes: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
 class FrameDetection:
     """Pixel geometry and the sides backed by full-length line evidence."""
 
     rectangle: Rectangle
     visible_sides: tuple[str, ...]
+    color_check: FrameColorValidation | None = None
 
     @property
     def inferred_sides(self) -> tuple[str, ...]:
@@ -203,12 +246,14 @@ def detect_frame(
     min_contrast: float = 0.03, min_side_fraction: float = 0.25,
     min_coverage: float = 0.9, max_candidates: int = 20,
 ) -> Rectangle | None:
-    """Binarize a normalized image and infer a rectangle from at least two sides.
+    """Infer a rectangle, then validate and refine its sides in original RGB.
 
     By default use foreground_mask, supporting grayscale, RGB, RGBA and boolean
     masks. To reproduce the previous dark-pixel preprocessing, explicitly pass
     darkness_threshold (e.g. 0.5). Color input is then reduced to luminance.
-    Use fit_frame(foreground_mask(image)) for visible/inferred-side metadata.
+    Return None for unresolved RGB inconsistencies. Use check_frame_colors on
+    fit_frame(foreground_mask(image)) for side metadata and color diagnostics;
+    fit_frame alone performs only the binary geometric stage.
     """
     if darkness_threshold is None:
         mask = foreground_mask(image, min_contrast=min_contrast)
@@ -223,4 +268,9 @@ def detect_frame(
         mask, min_side_fraction=min_side_fraction, min_coverage=min_coverage,
         max_candidates=max_candidates,
     )
-    return result.rectangle if result else None
+    from .frame_colors import check_frame_colors
+
+    result = check_frame_colors(image, result, min_line_contrast=min_contrast)
+    if result is None or result.color_check.status in ("suspect", "rejected"):
+        return None
+    return result.rectangle

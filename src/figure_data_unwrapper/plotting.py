@@ -111,6 +111,8 @@ def plot_check(
         raise ValueError("The check plot output must have a .png extension.")
     swatches = [_swatch(row) for row in colors[:10]] if colors is not None else []
     notes = list(ticks.notes) if ticks is not None else []
+    if frame is not None and frame.color_check is not None:
+        notes = [*frame.color_check.notes, *notes]
     if frame is None:
         notes.insert(0, "No frame result available.")
     elif ticks is None:
@@ -183,6 +185,11 @@ def plot_check(
             if has_rejected:
                 panel.text(0, 188, f"Separated: x = {len(ticks.rejected_x_ticks)}, y = {len(ticks.rejected_y_ticks)}", fontsize=9)
             panel.text(0, 166 + extra, f"Grid: {len(ticks.vertical_grid)} vertical, {len(ticks.horizontal_grid)} horizontal", fontsize=9)
+        if frame is not None and frame.color_check is not None:
+            color_status = frame.color_check.status
+            if frame.color_check.corrected:
+                color_status += " (corrected)"
+            panel.text(0, 186 + extra, f"Frame RGB: {color_status}", fontsize=8)
         if swatches:
             panel.text(0, 200 + extra, f"Top colors ({len(swatches)} of {len(colors)})", fontsize=10, weight="bold")
             for index, (color, label, count) in enumerate(swatches):

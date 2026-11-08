@@ -7,6 +7,7 @@ import numpy as np
 from numpy.typing import ArrayLike
 
 from .frame import FrameDetection, fit_frame
+from .frame_colors import check_frame_colors
 from .preprocessing import _foreground_contrast
 
 
@@ -266,8 +267,10 @@ def detect_ticks_and_grid(
     """Automatically find ticks and grid-like lines after frame reconstruction.
 
     Accept a successful fit_frame result or reconstruct the frame automatically.
-    Return None when frame reconstruction fails. Pixel positions are sorted left
-    to right for x, top to bottom for y. No spacing or axis-scale model is assumed.
+    Validate/refine unchecked frames in original RGB before extracting branches.
+    Return None when reconstruction fails or color checks remain unresolved.
+    Pixel positions are sorted left to right for x, top to bottom for y.
+    No spacing or axis-scale model is assumed.
 
     Short perpendicular branches identify ticks. Grid search starts with branch
     support immediately inside opposite frame sides, then traces straight across
@@ -303,12 +306,19 @@ def detect_ticks_and_grid(
             return None
     if not isinstance(frame, FrameDetection):
         raise TypeError("frame must be a successful fit_frame result.")
+    if frame.color_check is not None and frame.color_check.status in ("suspect", "rejected"):
+        return None
     if len(set(frame.visible_sides)) < 2 or not set(frame.visible_sides) <= {"top", "bottom", "left", "right"}:
         raise ValueError("The supplied frame must have at least two observed sides.")
     r = frame.rectangle
     height, width = mask.shape
     if not (0 <= r.left < r.right < width and 0 <= r.top < r.bottom < height):
         raise ValueError("The supplied frame lies outside this image.")
+    if frame.color_check is None:
+        frame = check_frame_colors(image, frame, min_line_contrast=min_contrast)
+    if frame.color_check.status in ("suspect", "rejected"):
+        return None
+    r = frame.rectangle
     bands = {side: _edge_band(mask, r, side) for side in ("top", "bottom", "left", "right")}
     inner = (
         max(math.floor(r.left) + 1, bands["left"][1] + 1),
