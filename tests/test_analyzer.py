@@ -82,7 +82,7 @@ class PreAnalyzerTests(unittest.TestCase):
         self.assertEqual(self.input.read_bytes(), original)
 
     def test_manual_values_separate_real_paper_false_branches(self):
-        paper = Path(__file__).resolve().parents[1] / "examples" / "real_example1.png"
+        paper = Path(__file__).resolve().parents[1] / "examples" / "real_example_1" / "real_example1.png"
         _, _, ticks, _ = pre_analyzer(
             paper, n_colors=7, output=self.output,
             x_ticks=np.linspace(0, 360, 17), y_ticks=[0, 2.5, 5, 7.5, 10],
@@ -98,7 +98,7 @@ class PreAnalyzerTests(unittest.TestCase):
         self.assertTrue(purple.any())
 
     def test_rgb_correction_precedes_grid_search_for_shadowed_paper(self):
-        paper = Path(__file__).resolve().parents[1] / "examples" / "real_example2.png"
+        paper = Path(__file__).resolve().parents[1] / "examples" / "real_example_2" / "real_example2.png"
         _, frame, ticks, _ = pre_analyzer(paper, n_colors=3, output=self.output)
         self.assertTrue(frame.color_check.corrected)
         self.assertAlmostEqual(frame.rectangle.top, 27, delta=1)

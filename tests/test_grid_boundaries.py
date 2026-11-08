@@ -20,7 +20,7 @@ class GridBoundaryTests(unittest.TestCase):
         self.assertEqual(result.horizontal_grid, ())
 
     def test_real_paper_legend_is_not_a_grid(self):
-        path = Path(__file__).resolve().parents[1] / "examples" / "real_example1.png"
+        path = Path(__file__).resolve().parents[1] / "examples" / "real_example_1" / "real_example1.png"
         result = detect_ticks_and_grid(imread(path))
         self.assertIsNotNone(result)
         self.assertEqual(result.vertical_grid, ())

@@ -179,7 +179,7 @@ class FrameColorTests(unittest.TestCase):
                 self.assertEqual(checked.color_check.status, "suspect")
 
     def test_real_example2_corrects_top_without_sharing_side_colors(self):
-        path = Path(__file__).resolve().parents[1] / "examples" / "real_example2.png"
+        path = Path(__file__).resolve().parents[1] / "examples" / "real_example_2" / "real_example2.png"
         proposed = FrameDetection(Rectangle(228, 0, 1661, 1459), ("left", "right", "bottom"))
         checked = check_frame_colors(imread(path), proposed)
         self.assertAlmostEqual(checked.rectangle.top, 27, delta=1)

@@ -12,8 +12,8 @@ matplotlib-base = ">=3.9,<4"
 figure-data-unwrapper = { path = ".", editable = true }
 
 [tasks]
-generate-example = "python examples/parabola.py"
-example = { cmd = "python examples/parabola_check.py", depends-on = ["generate-example"] }
+generate-example = "python examples/parabola/parabola.py"
+example = { cmd = "python examples/parabola/parabola_check.py", depends-on = ["generate-example"] }
 detect-frame = { cmd = "python examples/detect_frame.py", depends-on = ["generate-example"] }
 test = "python -m unittest discover -s tests -v"
 test-frame-variants = "python tests/run_frame_variants.py"
@@ -21,5 +21,6 @@ binarization-trial = "python examples/binarization_trial.py"
 detect-ticks = { cmd = "python examples/detect_ticks.py", depends-on = ["generate-example"] }
 rank-colors = { cmd = "python examples/rank_colors.py", depends-on = ["generate-example"] }
 check-parabola = { depends-on = ["example"] }
-check-real-example1 = "python examples/real_example1_check.py"
-check-real-example2 = "python examples/real_example2_check.py"
+check-real-example1 = "python examples/real_example_1/real_example1_check.py"
+check-real-example2 = "python examples/real_example_2/real_example2_check.py"
+extract-real-example1-red = "python examples/real_example_1/real_example1_red.py"

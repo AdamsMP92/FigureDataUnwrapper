@@ -19,9 +19,9 @@ pixi run test
 ```
 
 The default example generates 13 points on the parabola `y = x**2`, with `x`
-evenly spaced between -3 and 3, saves `examples/parabola.png`, and runs the
-`pre_analyzer` wrapper from `examples/parabola_check.py`. Its standard plausibility
-plot is saved as `examples/parabola_check.png`, without opening a window.
+evenly spaced between -3 and 3, saves `examples/parabola/parabola.png`, and runs the
+`pre_analyzer` wrapper from `examples/parabola/parabola_check.py`. Its standard plausibility
+plot is saved as `examples/parabola/parabola_check.png`, without opening a window.
 Use `pixi run generate-example` to generate just the reference input image.
 `detect-frame` reads only the rendered PNG and writes `parabola_mask.png`
 (black foreground on white background) and `parabola_frame.png` (red overlay).
@@ -36,7 +36,7 @@ and the PNG plausibility plot in one call:
 from pathlib import Path
 from figure_data_unwrapper import pre_analyzer
 
-image, frame, ticks, colors = pre_analyzer(Path("examples/parabola.png"), n_colors=7)
+image, frame, ticks, colors = pre_analyzer(Path("examples/parabola/parabola.png"), n_colors=7)
 ```
 
 The image returned by the wrapper is normalized to 0–1, including integer JPEG
@@ -76,7 +76,7 @@ import numpy as np
 from figure_data_unwrapper import pre_analyzer
 
 image, frame, ticks, colors = pre_analyzer(
-    "examples/real_example1.png", n_colors=7,
+    "examples/real_example_1/real_example1.png", n_colors=7,
     x_ticks=np.linspace(0, 360, 17),
     y_ticks=[0, 2.5, 5, 7.5, 10],
     x_lin=True, y_lin=True,
@@ -235,7 +235,7 @@ prevent subsequent tick/grid extraction. `fit_frame` remains the binary-only
 stage; `pre_analyzer`, `detect_frame` and automatic `detect_ticks_and_grid` use
 the RGB check. Check plots report its status and any boundary correction.
 
-For `examples/real_example2.png`, the gray upper page shadow originally extended
+For `examples/real_example_2/real_example2.png`, the gray upper page shadow originally extended
 the proposed frame to row 0. RGB transitions on the vertical sides identify the
 actual upper spine around row 27. Correction removes the shadow band from the
 plot interior, so it no longer appears as a spurious grid line.
@@ -338,6 +338,84 @@ pixi run rank-colors path/to/figure.png --n-colors 20
 The example prints the tuples directly. Matplotlib loads PNGs as normalized
 floating arrays, so their RGB values are printed on the 0–1 scale.
 
+## Color-selected calibrated pixel clouds
+
+`extract_color_data` directly accepts the four-part return value from
+`pre_analyzer`. Both axes must have a unique numerical tick mapping, obtained
+by supplying axis tick values. A frame or regular tick spacing alone does not
+establish numerical data coordinates; ambiguous mappings fail explicitly.
+
+```python
+from figure_data_unwrapper import extract_color_data, plot_color_data
+
+# analysis = pre_analyzer(..., x_ticks=..., y_ticks=..., ...)
+cloud = extract_color_data(analysis, "red", components="largest")
+x, y, eps = cloud
+plot_color_data(analysis, cloud, output="red_curve.png")
+```
+
+The result contains **one point per matching source pixel**, with no centerline
+fit, interpolation, thinning or curve smoothing. `x` and `y` are 1D arrays of
+axis values; `eps` has shape `(N, 2)`, ordered `(eps_x, eps_y)` in the respective
+axis units. `cloud.pixels` preserves the source `(column, row)` positions.
+`cloud.to_array()` returns columns `x,y,eps_x,eps_y,pixel_x,pixel_y`, suitable for
+CSV export. Points stay in source row-major order, rather than curve order.
+
+Color selection uses Euclidean distance in normalized RGB with
+`color_tolerance=0.2`. Use a color name/hex string, integer RGB in `[0,255]`,
+or floating RGB in `[0,1]`; nearby antialiasing shades can match within that
+tolerance. RGBA is composited over white. The frame interior is cropped by
+`frame_margin=4` pixels on every side, excluding the frame strip. This margin
+can be adjusted for thick or cropped frames. No match produces an empty cloud
+with the same array shapes, rather than inventing points.
+
+The default `components="all"` keeps disconnected markers and fragments.
+`components="largest"` selects the largest 8-connected color component by pixel
+area. This removes the separate red legend stroke in example1. It is a geometric
+heuristic: fragmented curves may lose valid components, and a larger same-color
+object or a touching legend cannot be distinguished by color alone.
+`matched_pixel_count`, `component_count` and `notes` report the selection.
+The diagnostic PNG overlays selected pixels in cyan beside the calibrated cloud.
+
+Calibration reuses the accepted tick assignments and the existing mappings
+`pixel = a*u + b`, with `u=value` or `u=ln(value)` independently per axis.
+The inverse handles linear, semilog, log-log and reversed axes; frame limits
+are not assumed to coincide with the outermost reference values.
+`calibrate_axes(ticks)` exposes the same calibration independently.
+
+`eps` describes approximate **one-standard-deviation calibration uncertainty**,
+conditional on the correct tick-value assignment and exact reference values.
+Tick-localization errors are assumed independent with equal variance. Their
+standard deviation is estimated from `sqrt(SSE/(n-2))`, with a lower bound of
+`tick_sigma_px=1/sqrt(12)` by default (uniform tick location within +/-0.5 px).
+Two anchors use that bound and report the lack of an independent residual test.
+With `Suu = sum((u_i - mean(u_i))**2)`, covariance propagation gives
+
+```text
+eps_u = sigma_pixel / abs(a) * sqrt(1/n + (u - mean(u_i))**2 / Suu)
+eps_value = eps_u                  # linear
+eps_value = value * eps_u          # logarithmic, first-order approximation
+```
+
+This is the uncertainty of the calibrated coordinate for a fixed query pixel.
+It excludes rendered line width, query-pixel quantization, experimental error
+bars and systematic errors from an incorrect model or label assignment.
+Calibration errors are shared across cloud points; the reported marginal
+uncertainties must not be treated as independent errors for every colored pixel.
+
+Run the complete red-curve example with
+
+```sh
+pixi run extract-real-example1-red
+```
+
+`examples/real_example_1/real_example1_red.py` reuses the existing paper pre-analysis
+and writes `real_example1_red.csv` and `real_example1_red.png` in the same folder.
+The current extraction keeps
+10,192 of 11,163 red pixels inside the frame margin, excluding the separate
+971-pixel legend stroke. Its approximate calibration uncertainties range from
+0.053 to 0.101 x-axis units and 0.0041 to 0.0065 y-axis units.
+
 ## Black-and-white consistency trial
 
 `pixi run binarization-trial` generates yellow left/bottom axes without a grid.
@@ -387,7 +465,7 @@ grids without ticks, colors, dark backgrounds, logarithmic spacing, optional
 count hints, detached labels, and failure of the prerequisite frame extraction.
 
 Boundary-tracing regressions cover the real paper figure in
-`examples/real_example1.png` (no grid), detached legend/text fragments, short
+`examples/real_example_1/real_example1.png` (no grid), detached legend/text fragments, short
 boundary stubs separated from interior lines, one-sided attachment, dash-gap
 limits, thick frame strokes, and dark backgrounds. Genuine grids are retained
 in these tests; disabling grid detection cannot satisfy the regressions.
@@ -402,8 +480,12 @@ transparency, grayscale input, and rejection of inconsistent geometry.
 
 ## Layout
 
-- `src/figure_data_unwrapper/`: geometry, preprocessing, and frame extraction.
+- `src/figure_data_unwrapper/`: geometry, preprocessing, frame/tick extraction,
+  numerical calibration, color-selected pixel clouds and diagnostic plots.
 - `tests/`: unittest checks and rendered color/visibility challenges.
-- `examples/`: reproducible figures, extraction overlays, and binarization trial.
+- `examples/parabola/`: synthetic figure generator, input PNG and plausibility check.
+- `examples/real_example_1/`: first paper figure, pre-analysis, red-curve extraction,
+  diagnostic PNGs and CSV output.
+- `examples/real_example_2/`: second paper figure and its pre-analysis/check plot.
 - `pixi.toml` and `pixi.lock`: environment and resolved dependencies.
 - `pyproject.toml`: Python package metadata and build configuration.

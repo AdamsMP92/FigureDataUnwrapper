@@ -8,6 +8,7 @@ import numpy as np
 from numpy.typing import ArrayLike
 
 from .colors import ColorCount
+from .extraction import ColorPointCloud, _analysis_parts
 from .frame import FrameDetection
 from .preprocessing import _normalized_image
 from .ticks import TickGridDetection
@@ -201,6 +202,55 @@ def plot_check(
             panel.text(0, 216 + extra + 22 * len(swatches) + 16 * index, line, fontsize=8)
         path.parent.mkdir(parents=True, exist_ok=True)
         figure.savefig(path, format="png", dpi=dpi)
+    finally:
+        figure.clear()
+    return path
+
+
+def plot_color_data(analysis, cloud: ColorPointCloud, *, output: str | Path = "color_data.png") -> Path:
+    """Show selected source pixels beside the calibrated, unsmoothed cloud.
+
+    Sparse error bars show the axis-wise 1-sigma calibration uncertainty, not
+    experimental errors or the rendered stroke width. No analysis is rerun.
+    """
+    rgb, frame, _ = _analysis_parts(analysis)
+    if not isinstance(cloud, ColorPointCloud):
+        raise TypeError("cloud must be a ColorPointCloud.")
+    if cloud.image_shape != rgb.shape[:2] or cloud.frame.rectangle != frame.rectangle:
+        raise ValueError("Cloud and analysis describe different image geometry.")
+    path = Path(output)
+    if path.suffix.lower() != ".png":
+        raise ValueError("The extraction plot output must have a .png extension.")
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    from matplotlib.figure import Figure
+
+    figure = Figure(figsize=(12, 5.3), dpi=150, layout="constrained")
+    FigureCanvasAgg(figure)
+    try:
+        source, calibrated = figure.subplots(1, 2)
+        source.imshow(rgb, origin="upper", interpolation="nearest")
+        source.scatter(cloud.pixels[:, 0], cloud.pixels[:, 1], s=0.3, c="#00a6b2", linewidths=0)
+        source.set_title(f"Selected pixels: {len(cloud.x):,} / {cloud.matched_pixel_count:,} color matches")
+        source.set_axis_off()
+        calibrated.scatter(cloud.x, cloud.y, s=0.4, color=cloud.color, linewidths=0)
+        if len(cloud.x):
+            sample = np.unique(np.linspace(0, len(cloud.x) - 1, min(40, len(cloud.x))).astype(int))
+            calibrated.errorbar(cloud.x[sample], cloud.y[sample], xerr=cloud.eps[sample, 0],
+                                yerr=cloud.eps[sample, 1], fmt="none", ecolor="#333333",
+                                elinewidth=0.5, label="Calibration 1 sigma (sampled)")
+            calibrated.legend(fontsize=8)
+        r = frame.rectangle
+        if cloud.calibration.x.scale == "log":
+            calibrated.set_xscale("log")
+        if cloud.calibration.y.scale == "log":
+            calibrated.set_yscale("log")
+        calibrated.set_xlim(cloud.calibration.x.transform([r.left, r.right])[0])
+        calibrated.set_ylim(cloud.calibration.y.transform([r.bottom, r.top])[0])
+        calibrated.set(title="Calibrated pixel cloud", xlabel="x (axis units)", ylabel="y (axis units)")
+        calibrated.grid(alpha=0.2)
+        figure.suptitle("Color extraction; calibration uncertainty excludes stroke width and experimental errors", fontsize=10)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        figure.savefig(path, format="png")
     finally:
         figure.clear()
     return path

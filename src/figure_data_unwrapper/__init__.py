@@ -4,7 +4,8 @@ from .analyzer import pre_analyzer
 from .colors import rank_colors
 from .frame import FrameColorChange, FrameColorValidation, FrameDetection, FrameEdgeColor, detect_frame, fit_frame
 from .frame_colors import check_frame_colors
-from .plotting import plot_check
+from .extraction import AxisCalibration, ColorPointCloud, CoordinateCalibration, calibrate_axes, extract_color_data
+from .plotting import plot_check, plot_color_data
 from .preprocessing import foreground_mask
 from .rectangle import Rectangle, rectangle_model
 from .ticks import (
@@ -14,9 +15,10 @@ from .ticks import (
 from .tick_validation import check_tick_consistency
 
 __all__ = [
-    "AxisTick", "AxisTickValidation", "FrameColorChange", "FrameColorValidation",
+    "AxisCalibration", "AxisTick", "AxisTickValidation", "ColorPointCloud", "CoordinateCalibration",
+    "FrameColorChange", "FrameColorValidation",
     "FrameDetection", "FrameEdgeColor", "GridLine", "Rectangle",
     "TickGridDetection", "TickMark", "TickOutlier", "check_frame_colors", "check_tick_consistency",
-    "detect_frame", "detect_ticks_and_grid", "fit_frame",
-    "foreground_mask", "plot_check", "pre_analyzer", "rank_colors", "rectangle_model",
+    "calibrate_axes", "detect_frame", "detect_ticks_and_grid", "extract_color_data", "fit_frame",
+    "foreground_mask", "plot_check", "plot_color_data", "pre_analyzer", "rank_colors", "rectangle_model",
 ]
