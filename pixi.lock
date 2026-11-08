@@ -4703,4 +4703,5 @@ packages:
   name: figure-data-unwrapper
   requires_dist:
   - numpy>=2,<3
+  - matplotlib>=3.9,<4
   requires_python: '>=3.12'

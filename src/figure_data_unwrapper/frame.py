@@ -44,9 +44,12 @@ def _line_candidates(
         return []
     groups = np.split(rows, np.flatnonzero(np.diff(rows) > 1) + 1)
     segments = []
-    max_gap = max(3, round(0.01 * mask.shape[1]))
+    max_gap = max(3, round(0.005 * mask.shape[1]))
     for group in groups:
-        profile = mask[group].any(axis=0)
+        # Trace the center of the stroke: an any-pixel union across its width
+        # can bridge a corner tick to nearby text and extend the spine into a
+        # tick label. Small genuine internal gaps are still permitted below.
+        profile = mask[group[len(group) // 2]]
         points = np.flatnonzero(profile)
         runs = np.split(points, np.flatnonzero(np.diff(points) > max_gap + 1) + 1)
         valid = [run for run in runs if (
@@ -70,6 +73,12 @@ def _tolerance(first: _Segment, second: _Segment) -> float:
     return (first.thickness + second.thickness) / 2 + 1
 
 
+def _endpoint_slack(line: _Segment) -> float:
+    """Permit short corner ticks continuing an otherwise full-length spine."""
+    stroke_limit = max(12, 4 * line.thickness)
+    return line.thickness / 2 + max(2, min(stroke_limit, 0.08 * (line.end - line.start)))
+
+
 def _propose(first: _Segment, second: _Segment) -> Rectangle | None:
     tolerance = _tolerance(first, second)
     if first.horizontal == second.horizontal:
@@ -87,15 +96,15 @@ def _propose(first: _Segment, second: _Segment) -> Rectangle | None:
         )
 
     h, v = (first, second) if first.horizontal else (second, first)
-    if abs(v.coordinate - h.start) <= tolerance:
+    if abs(v.coordinate - h.start) <= _endpoint_slack(h):
         left, right = v.coordinate, h.end
-    elif abs(v.coordinate - h.end) <= tolerance:
+    elif abs(v.coordinate - h.end) <= _endpoint_slack(h):
         left, right = h.start, v.coordinate
     else:
         return None
-    if abs(h.coordinate - v.start) <= tolerance:
+    if abs(h.coordinate - v.start) <= _endpoint_slack(v):
         top, bottom = h.coordinate, v.end
-    elif abs(h.coordinate - v.end) <= tolerance:
+    elif abs(h.coordinate - v.end) <= _endpoint_slack(v):
         top, bottom = v.start, h.coordinate
     else:
         return None
@@ -118,8 +127,11 @@ def _matching_sides(
         candidates = [line for line in segments if (
             line.horizontal == horizontal
             and abs(line.coordinate - coordinate) <= line.thickness / 2 + 2
-            and abs(line.start - start) <= line.thickness / 2 + 2
-            and abs(line.end - end) <= line.thickness / 2 + 2
+            and start - _endpoint_slack(line) <= line.start <= start + line.thickness / 2 + 2
+            and end - line.thickness / 2 - 2 <= line.end <= end + _endpoint_slack(line)
+            # At least one end must be anchored. Four long grid lines crossing
+            # a smaller interior box must not masquerade as four frame sides.
+            and min(abs(line.start - start), abs(line.end - end)) <= line.thickness / 2 + 2
         )]
         if candidates:
             matches[side] = min(candidates, key=lambda line: abs(line.coordinate - coordinate))
@@ -135,7 +147,9 @@ def fit_frame(
     Adjacent segments must meet at their endpoints; opposite segments must
     agree on their longitudinal extents. At least two full sides are required.
     Missing sides are inferred from the finite segment endpoints. Among valid
-    proposals the largest area wins, with visible-side count breaking ties.
+    proposals the greatest number of supported sides wins, then largest area.
+    Short line extensions at corners may be ticks; intersecting side positions
+    take precedence over these extensions when establishing the bounds.
 
     This assumes a single axis-aligned plot with full-length spines and no
     larger competing rectangular objects. Cropped or shortened spines do not
@@ -156,7 +170,7 @@ def fit_frame(
         mask.T, min_side_fraction * height, min_coverage, max_candidates, horizontal=False
     )
     best = None
-    best_score = (0.0, 0)
+    best_score = (0, 0.0)
     for first, second in combinations(segments, 2):
         rectangle = _propose(first, second)
         if rectangle is None:
@@ -177,7 +191,7 @@ def fit_frame(
             or rectangle.height < min_side_fraction * height
         ):
             continue
-        score = (rectangle.width * rectangle.height, len(matches))
+        score = (len(matches), rectangle.width * rectangle.height)
         if score > best_score:
             best = FrameDetection(rectangle, tuple(matches))
             best_score = score

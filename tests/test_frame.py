@@ -80,6 +80,13 @@ class FrameDetectionTests(unittest.TestCase):
             with self.subTest(value=image[0, 0]):
                 self.assertIsNone(detect_frame(image))
 
+    def test_corner_ticks_do_not_extend_frame_bounds(self):
+        image = np.ones((160, 220))
+        draw_frame(image, 30, 20, 190, 130)
+        image[131:137, [30, 190]] = 0
+        image[[20, 130], 24:30] = 0
+        self.assertEqual(detect_frame(image), Rectangle(30, 20, 190, 130))
+
     def test_invalid_image_and_parameters(self):
         for image in (np.empty((0, 2)), np.ones((4, 4, 2)), [[np.nan]], [[255]]):
             with self.subTest(shape=np.shape(image)), self.assertRaises(ValueError):

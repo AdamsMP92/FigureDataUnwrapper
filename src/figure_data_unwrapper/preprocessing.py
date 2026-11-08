@@ -41,6 +41,14 @@ def foreground_mask(
     source = np.asarray(image)
     if source.dtype == np.bool_ and source.ndim == 2 and source.size:
         return source.copy()
+    return _foreground_contrast(source) >= min_contrast
+
+
+def _foreground_contrast(image: ArrayLike) -> NDArray[np.float64]:
+    """Absolute background contrast, retaining strength for branch analysis."""
+    source = np.asarray(image)
+    if source.dtype == np.bool_ and source.ndim == 2 and source.size:
+        return source.astype(np.float64)
     values = _normalized_image(source)
     perimeter = np.concatenate((
         values[0], values[-1], values[1:-1, 0], values[1:-1, -1],
@@ -49,4 +57,4 @@ def foreground_mask(
     contrast = np.abs(values - background)
     if values.ndim == 3:
         contrast = contrast.max(axis=2)
-    return contrast >= min_contrast
+    return contrast
