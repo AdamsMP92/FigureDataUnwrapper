@@ -9,6 +9,7 @@ from numpy.typing import ArrayLike
 
 from .colors import ColorCount
 from .extraction import ColorPointCloud, _analysis_parts
+from .markers import MarkerPointCloud
 from .frame import FrameDetection
 from .preprocessing import _normalized_image
 from .ticks import TickGridDetection
@@ -249,6 +250,52 @@ def plot_color_data(analysis, cloud: ColorPointCloud, *, output: str | Path = "c
         calibrated.set(title="Calibrated pixel cloud", xlabel="x (axis units)", ylabel="y (axis units)")
         calibrated.grid(alpha=0.2)
         figure.suptitle("Color extraction; calibration uncertainty excludes stroke width and experimental errors", fontsize=10)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        figure.savefig(path, format="png")
+    finally:
+        figure.clear()
+    return path
+
+
+def plot_marker_data(analysis, cloud: MarkerPointCloud, *, output: str | Path = "markers.png") -> Path:
+    """Overlay numbered marker hypotheses and plot their calibrated centers."""
+    rgb, frame, _ = _analysis_parts(analysis)
+    if not isinstance(cloud, MarkerPointCloud):
+        raise TypeError("cloud must be a MarkerPointCloud.")
+    if cloud.image_shape != rgb.shape[:2] or cloud.frame.rectangle != frame.rectangle:
+        raise ValueError("Markers and analysis describe different image geometry.")
+    path = Path(output)
+    if path.suffix.lower() != ".png":
+        raise ValueError("The marker plot output must have a .png extension.")
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    from matplotlib.figure import Figure
+    from matplotlib.patches import Rectangle as RectanglePatch
+
+    figure = Figure(figsize=(13, 5.5), dpi=150, layout="constrained")
+    FigureCanvasAgg(figure)
+    try:
+        source, calibrated = figure.subplots(1, 2)
+        source.imshow(rgb, origin="upper", interpolation="nearest")
+        for index, match in enumerate(cloud.matches):
+            source.scatter(match.pixel_x, match.pixel_y, s=65, facecolors="none", edgecolors="#00a6b2", linewidths=.8)
+            source.text(match.pixel_x, match.pixel_y - 20, str(index), fontsize=5, color="#087177")
+        for region in cloud.excluded_regions:
+            source.add_patch(RectanglePatch((region.left, region.top), region.width, region.height,
+                                            fill=False, edgecolor="#da9100", linestyle="--", linewidth=1))
+        source.set(title=f"Marker hypotheses: {len(cloud.matches)}; numbered centers")
+        source.set_axis_off()
+        calibrated.errorbar(cloud.x, cloud.y, xerr=cloud.eps[:, 0], yerr=cloud.eps[:, 1],
+                            fmt="o", markersize=3, color=cloud.color, elinewidth=.6)
+        if cloud.calibration.x.scale == "log":
+            calibrated.set_xscale("log")
+        if cloud.calibration.y.scale == "log":
+            calibrated.set_yscale("log")
+        r = frame.rectangle
+        calibrated.set_xlim(cloud.calibration.x.transform([r.left, r.right])[0])
+        calibrated.set_ylim(cloud.calibration.y.transform([r.bottom, r.top])[0])
+        calibrated.set(title="Calibrated marker centers", xlabel="x (axis units)", ylabel="y (axis units)")
+        calibrated.grid(alpha=.2)
+        figure.suptitle("Reference-template hypotheses; error bars show calibration uncertainty only", fontsize=10)
         path.parent.mkdir(parents=True, exist_ok=True)
         figure.savefig(path, format="png")
     finally:

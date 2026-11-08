@@ -24,3 +24,4 @@ check-parabola = { depends-on = ["example"] }
 check-real-example1 = "python examples/real_example_1/real_example1_check.py"
 check-real-example2 = "python examples/real_example_2/real_example2_check.py"
 extract-real-example1-red = "python examples/real_example_1/real_example1_red.py"
+extract-real-example1-markers = "python examples/real_example_1/real_example1_markers.py"

@@ -416,6 +416,88 @@ The current extraction keeps
 971-pixel legend stroke. Its approximate calibration uncertainties range from
 0.053 to 0.101 x-axis units and 0.0041 to 0.0065 y-axis units.
 
+## Reference-marker extraction
+
+`extract_markers` complements the continuous color-pixel extractor: it returns
+one calibrated center per **marker hypothesis**, using a cropped reference PNG.
+It accepts the same four-part pre-analysis and reuses its unique numerical tick
+mappings. The reference should contain one clean marker with background margins.
+
+```python
+from pathlib import Path
+from figure_data_unwrapper import extract_markers, plot_marker_data
+
+cloud = extract_markers(
+    analysis, Path("examples/real_example_1/black_marker.png"),
+    scales=(1.0, 1.1, 1.2),
+)
+x, y, eps = cloud
+plot_marker_data(analysis, cloud, output="marker_check.png")
+```
+
+The method combines color screening, masked normalized correlation and a
+weighted squared-error fit. Normalized correlation follows the template-matching
+principle described in the [OpenCV documentation](https://docs.opencv.org/4.13.0/de/da9/tutorial_template_matching.html);
+the implementation here uses NumPy and introduces no OpenCV dependency.
+
+1. Estimate the background from the reference perimeter and the marker color
+   from its contrasting foreground (`color` can override it).
+2. Project RGB onto the background-to-marker color segment to measure ink
+   coverage. Foreign colors farther than `color_tolerance=0.2` from that segment
+   are masked as unknown. Thus a red line over a black circle does not count as
+   evidence that the circle is missing at those pixels.
+3. Screen positions and scales by normalized correlation (`min_score=0.65`),
+   foreground support (`min_color_support=0.65`) and visible template foreground
+   (`min_visible_fraction=0.6`). Search center positions inside the frame; a
+   marker patch may cross the frame boundary if it remains within the image.
+4. Fit the union of proposed templates, with `model = 1 - product(1-template)`
+   for overlapping ink. Greedily add a hypothesis only if it reduces weighted
+   image squared error by more than `min_gain * template_energy` (`min_gain=0.12`).
+   Bounded joint position/scale refinement reduces redundant or displaced fits.
+
+This allows touching markers to remain separate hypotheses. It does not require
+each marker to be a separate connected color component. FFT correlations avoid
+allocating all sliding windows, and `max_candidates=500`, at most 12 scales,
+and `refinement_steps=2` bound the search. Parameter changes trade recall against
+false positives; a larger template bank is not a guarantee of greater accuracy.
+
+The default center is the reference ink centroid, so asymmetric crop margins do
+not offset the coordinates. `anchor=(pixel_x, pixel_y)` overrides this location
+inside the original reference PNG, useful for asymmetric marker shapes. The
+default minimum center spacing is 45% of the smallest scaled marker diameter;
+`min_distance` overrides it in source pixels. `frame_margin=1` applies to centers.
+
+`cloud.matches` retains source centers, selected scale, correlation score, color
+support, visible fraction, local patch MSE, unique error reduction and an overlap
+flag. MSE includes neighboring strokes within the patch; the joint fit handles
+overlap separately. Scores are diagnostic measurements, not probabilities.
+`cloud.pixels` stores center positions, and `cloud.to_array()` exports columns
+`x,y,eps_x,eps_y,pixel_x,pixel_y,scale,score,support,visible,mse,gain,overlap`.
+The points are sorted by source x, then source y.
+
+As with color clouds, `eps` contains axis-wise 1-sigma **calibration** uncertainty.
+It does not estimate marker-center localization error or experimental error bars.
+Merged, heavily occluded or poorly resolved symbols may remain ambiguous even
+when a template score is high. The numbered source overlay is part of the check.
+
+Identical legend symbols cannot be classified as annotations by shape and color
+alone. `exclude_regions` accepts explicitly supplied `Rectangle` objects in
+source pixel coordinates. These regions apply to marker centers and appear as
+dashed amber boxes in the plot. The example supplies one known region around the
+legend dot; this exclusion is not inferred automatically.
+
+```sh
+pixi run extract-real-example1-markers
+```
+
+`examples/real_example_1/real_example1_markers.py` uses `black_marker.png` with
+scales 1.0, 1.1 and 1.2, and writes `real_example1_markers.csv` and
+`real_example1_markers.png`. The current settings yield 45 hypotheses, 42 of
+which overlap another template footprint. This is not a verified count of the
+unavailable paper dataset. Synthetic tests instead use independent known marker
+positions to check localization, overlap, colored overdraw, scale variation,
+noise, crop padding, color changes and rejection of thin strokes.
+
 ## Black-and-white consistency trial
 
 `pixi run binarization-trial` generates yellow left/bottom axes without a grid.
