@@ -1,0 +1,145 @@
+color,visible_sides,expected,passed,detected,left,top,right,bottom,max_error_px,message
+black,bottom,none,True,False,,,,,,
+black,bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=black, visible sides=('bottom', 'right')."
+black,bottom+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=black, visible sides=('bottom', 'right', 'top')."
+black,bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=black, visible sides=('bottom', 'top')."
+black,left,none,True,False,,,,,,
+black,left+bottom,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=black, visible sides=('left', 'bottom')."
+black,left+bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=black, visible sides=('left', 'bottom', 'right')."
+black,left+bottom+right+top,frame,True,True,57.5,23.5,293.5,191.5,0.4000000000000057,
+black,left+bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=black, visible sides=('left', 'bottom', 'top')."
+black,left+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=black, visible sides=('left', 'right')."
+black,left+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=black, visible sides=('left', 'right', 'top')."
+black,left+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=black, visible sides=('left', 'top')."
+black,none,none,True,False,,,,,,
+black,right,none,True,False,,,,,,
+black,right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=black, visible sides=('right', 'top')."
+black,top,none,True,False,,,,,,
+blue,bottom,none,True,False,,,,,,
+blue,bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=blue, visible sides=('bottom', 'right')."
+blue,bottom+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=blue, visible sides=('bottom', 'right', 'top')."
+blue,bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=blue, visible sides=('bottom', 'top')."
+blue,left,none,True,False,,,,,,
+blue,left+bottom,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=blue, visible sides=('left', 'bottom')."
+blue,left+bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=blue, visible sides=('left', 'bottom', 'right')."
+blue,left+bottom+right+top,frame,True,True,57.5,23.5,293.5,191.5,0.4000000000000057,
+blue,left+bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=blue, visible sides=('left', 'bottom', 'top')."
+blue,left+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=blue, visible sides=('left', 'right')."
+blue,left+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=blue, visible sides=('left', 'right', 'top')."
+blue,left+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=blue, visible sides=('left', 'top')."
+blue,none,none,True,False,,,,,,
+blue,right,none,True,False,,,,,,
+blue,right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=blue, visible sides=('right', 'top')."
+blue,top,none,True,False,,,,,,
+cyan,bottom,none,True,False,,,,,,
+cyan,bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=cyan, visible sides=('bottom', 'right')."
+cyan,bottom+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=cyan, visible sides=('bottom', 'right', 'top')."
+cyan,bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=cyan, visible sides=('bottom', 'top')."
+cyan,left,none,True,False,,,,,,
+cyan,left+bottom,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=cyan, visible sides=('left', 'bottom')."
+cyan,left+bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=cyan, visible sides=('left', 'bottom', 'right')."
+cyan,left+bottom+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=cyan, visible sides=('left', 'bottom', 'right', 'top')."
+cyan,left+bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=cyan, visible sides=('left', 'bottom', 'top')."
+cyan,left+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=cyan, visible sides=('left', 'right')."
+cyan,left+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=cyan, visible sides=('left', 'right', 'top')."
+cyan,left+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=cyan, visible sides=('left', 'top')."
+cyan,none,none,True,False,,,,,,
+cyan,right,none,True,False,,,,,,
+cyan,right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=cyan, visible sides=('right', 'top')."
+cyan,top,none,True,False,,,,,,
+dark_green,bottom,none,True,False,,,,,,
+dark_green,bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=dark_green, visible sides=('bottom', 'right')."
+dark_green,bottom+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=dark_green, visible sides=('bottom', 'right', 'top')."
+dark_green,bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=dark_green, visible sides=('bottom', 'top')."
+dark_green,left,none,True,False,,,,,,
+dark_green,left+bottom,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=dark_green, visible sides=('left', 'bottom')."
+dark_green,left+bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=dark_green, visible sides=('left', 'bottom', 'right')."
+dark_green,left+bottom+right+top,frame,True,True,57.5,23.5,293.5,191.5,0.4000000000000057,
+dark_green,left+bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=dark_green, visible sides=('left', 'bottom', 'top')."
+dark_green,left+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=dark_green, visible sides=('left', 'right')."
+dark_green,left+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=dark_green, visible sides=('left', 'right', 'top')."
+dark_green,left+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=dark_green, visible sides=('left', 'top')."
+dark_green,none,none,True,False,,,,,,
+dark_green,right,none,True,False,,,,,,
+dark_green,right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=dark_green, visible sides=('right', 'top')."
+dark_green,top,none,True,False,,,,,,
+light_gray,bottom,none,True,False,,,,,,
+light_gray,bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=light_gray, visible sides=('bottom', 'right')."
+light_gray,bottom+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=light_gray, visible sides=('bottom', 'right', 'top')."
+light_gray,bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=light_gray, visible sides=('bottom', 'top')."
+light_gray,left,none,True,False,,,,,,
+light_gray,left+bottom,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=light_gray, visible sides=('left', 'bottom')."
+light_gray,left+bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=light_gray, visible sides=('left', 'bottom', 'right')."
+light_gray,left+bottom+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=light_gray, visible sides=('left', 'bottom', 'right', 'top')."
+light_gray,left+bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=light_gray, visible sides=('left', 'bottom', 'top')."
+light_gray,left+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=light_gray, visible sides=('left', 'right')."
+light_gray,left+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=light_gray, visible sides=('left', 'right', 'top')."
+light_gray,left+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=light_gray, visible sides=('left', 'top')."
+light_gray,none,none,True,False,,,,,,
+light_gray,right,none,True,False,,,,,,
+light_gray,right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=light_gray, visible sides=('right', 'top')."
+light_gray,top,none,True,False,,,,,,
+orange,bottom,none,True,False,,,,,,
+orange,bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=orange, visible sides=('bottom', 'right')."
+orange,bottom+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=orange, visible sides=('bottom', 'right', 'top')."
+orange,bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=orange, visible sides=('bottom', 'top')."
+orange,left,none,True,False,,,,,,
+orange,left+bottom,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=orange, visible sides=('left', 'bottom')."
+orange,left+bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=orange, visible sides=('left', 'bottom', 'right')."
+orange,left+bottom+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=orange, visible sides=('left', 'bottom', 'right', 'top')."
+orange,left+bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=orange, visible sides=('left', 'bottom', 'top')."
+orange,left+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=orange, visible sides=('left', 'right')."
+orange,left+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=orange, visible sides=('left', 'right', 'top')."
+orange,left+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=orange, visible sides=('left', 'top')."
+orange,none,none,True,False,,,,,,
+orange,right,none,True,False,,,,,,
+orange,right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=orange, visible sides=('right', 'top')."
+orange,top,none,True,False,,,,,,
+purple,bottom,none,True,False,,,,,,
+purple,bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=purple, visible sides=('bottom', 'right')."
+purple,bottom+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=purple, visible sides=('bottom', 'right', 'top')."
+purple,bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=purple, visible sides=('bottom', 'top')."
+purple,left,none,True,False,,,,,,
+purple,left+bottom,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=purple, visible sides=('left', 'bottom')."
+purple,left+bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=purple, visible sides=('left', 'bottom', 'right')."
+purple,left+bottom+right+top,frame,True,True,57.5,23.5,293.5,191.5,0.4000000000000057,
+purple,left+bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=purple, visible sides=('left', 'bottom', 'top')."
+purple,left+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=purple, visible sides=('left', 'right')."
+purple,left+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=purple, visible sides=('left', 'right', 'top')."
+purple,left+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=purple, visible sides=('left', 'top')."
+purple,none,none,True,False,,,,,,
+purple,right,none,True,False,,,,,,
+purple,right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=purple, visible sides=('right', 'top')."
+purple,top,none,True,False,,,,,,
+red,bottom,none,True,False,,,,,,
+red,bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=red, visible sides=('bottom', 'right')."
+red,bottom+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=red, visible sides=('bottom', 'right', 'top')."
+red,bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=red, visible sides=('bottom', 'top')."
+red,left,none,True,False,,,,,,
+red,left+bottom,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=red, visible sides=('left', 'bottom')."
+red,left+bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=red, visible sides=('left', 'bottom', 'right')."
+red,left+bottom+right+top,frame,True,True,57.5,23.5,293.5,191.5,0.4000000000000057,
+red,left+bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=red, visible sides=('left', 'bottom', 'top')."
+red,left+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=red, visible sides=('left', 'right')."
+red,left+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=red, visible sides=('left', 'right', 'top')."
+red,left+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=red, visible sides=('left', 'top')."
+red,none,none,True,False,,,,,,
+red,right,none,True,False,,,,,,
+red,right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=red, visible sides=('right', 'top')."
+red,top,none,True,False,,,,,,
+yellow,bottom,none,True,False,,,,,,
+yellow,bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=yellow, visible sides=('bottom', 'right')."
+yellow,bottom+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=yellow, visible sides=('bottom', 'right', 'top')."
+yellow,bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=yellow, visible sides=('bottom', 'top')."
+yellow,left,none,True,False,,,,,,
+yellow,left+bottom,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=yellow, visible sides=('left', 'bottom')."
+yellow,left+bottom+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=yellow, visible sides=('left', 'bottom', 'right')."
+yellow,left+bottom+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=yellow, visible sides=('left', 'bottom', 'right', 'top')."
+yellow,left+bottom+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=yellow, visible sides=('left', 'bottom', 'top')."
+yellow,left+right,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=yellow, visible sides=('left', 'right')."
+yellow,left+right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=yellow, visible sides=('left', 'right', 'top')."
+yellow,left+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=yellow, visible sides=('left', 'top')."
+yellow,none,none,True,False,,,,,,
+yellow,right,none,True,False,,,,,,
+yellow,right+top,frame,False,False,,,,,,"unexpectedly None : No frame extracted: color=yellow, visible sides=('right', 'top')."
+yellow,top,none,True,False,,,,,,

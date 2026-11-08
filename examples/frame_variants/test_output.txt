@@ -1,0 +1,293 @@
+test_black__bottom (test_frame_variants.FrameVariantTests.test_black__bottom)
+black: bottom; expect abstention. ... ok
+test_black__bottom_right (test_frame_variants.FrameVariantTests.test_black__bottom_right)
+black: bottom, right; expect reconstruction. ... ok
+test_black__bottom_right_top (test_frame_variants.FrameVariantTests.test_black__bottom_right_top)
+black: bottom, right, top; expect reconstruction. ... ok
+test_black__bottom_top (test_frame_variants.FrameVariantTests.test_black__bottom_top)
+black: bottom, top; expect reconstruction. ... ok
+test_black__left (test_frame_variants.FrameVariantTests.test_black__left)
+black: left; expect abstention. ... ok
+test_black__left_bottom (test_frame_variants.FrameVariantTests.test_black__left_bottom)
+black: left, bottom; expect reconstruction. ... ok
+test_black__left_bottom_right (test_frame_variants.FrameVariantTests.test_black__left_bottom_right)
+black: left, bottom, right; expect reconstruction. ... ok
+test_black__left_bottom_right_top (test_frame_variants.FrameVariantTests.test_black__left_bottom_right_top)
+black: left, bottom, right, top; expect reconstruction. ... ok
+test_black__left_bottom_top (test_frame_variants.FrameVariantTests.test_black__left_bottom_top)
+black: left, bottom, top; expect reconstruction. ... ok
+test_black__left_right (test_frame_variants.FrameVariantTests.test_black__left_right)
+black: left, right; expect reconstruction. ... ok
+test_black__left_right_top (test_frame_variants.FrameVariantTests.test_black__left_right_top)
+black: left, right, top; expect reconstruction. ... ok
+test_black__left_top (test_frame_variants.FrameVariantTests.test_black__left_top)
+black: left, top; expect reconstruction. ... ok
+test_black__none (test_frame_variants.FrameVariantTests.test_black__none)
+black: no sides; expect abstention. ... ok
+test_black__right (test_frame_variants.FrameVariantTests.test_black__right)
+black: right; expect abstention. ... ok
+test_black__right_top (test_frame_variants.FrameVariantTests.test_black__right_top)
+black: right, top; expect reconstruction. ... ok
+test_black__top (test_frame_variants.FrameVariantTests.test_black__top)
+black: top; expect abstention. ... ok
+test_blue__bottom (test_frame_variants.FrameVariantTests.test_blue__bottom)
+blue: bottom; expect abstention. ... ok
+test_blue__bottom_right (test_frame_variants.FrameVariantTests.test_blue__bottom_right)
+blue: bottom, right; expect reconstruction. ... ok
+test_blue__bottom_right_top (test_frame_variants.FrameVariantTests.test_blue__bottom_right_top)
+blue: bottom, right, top; expect reconstruction. ... ok
+test_blue__bottom_top (test_frame_variants.FrameVariantTests.test_blue__bottom_top)
+blue: bottom, top; expect reconstruction. ... ok
+test_blue__left (test_frame_variants.FrameVariantTests.test_blue__left)
+blue: left; expect abstention. ... ok
+test_blue__left_bottom (test_frame_variants.FrameVariantTests.test_blue__left_bottom)
+blue: left, bottom; expect reconstruction. ... ok
+test_blue__left_bottom_right (test_frame_variants.FrameVariantTests.test_blue__left_bottom_right)
+blue: left, bottom, right; expect reconstruction. ... ok
+test_blue__left_bottom_right_top (test_frame_variants.FrameVariantTests.test_blue__left_bottom_right_top)
+blue: left, bottom, right, top; expect reconstruction. ... ok
+test_blue__left_bottom_top (test_frame_variants.FrameVariantTests.test_blue__left_bottom_top)
+blue: left, bottom, top; expect reconstruction. ... ok
+test_blue__left_right (test_frame_variants.FrameVariantTests.test_blue__left_right)
+blue: left, right; expect reconstruction. ... ok
+test_blue__left_right_top (test_frame_variants.FrameVariantTests.test_blue__left_right_top)
+blue: left, right, top; expect reconstruction. ... ok
+test_blue__left_top (test_frame_variants.FrameVariantTests.test_blue__left_top)
+blue: left, top; expect reconstruction. ... ok
+test_blue__none (test_frame_variants.FrameVariantTests.test_blue__none)
+blue: no sides; expect abstention. ... ok
+test_blue__right (test_frame_variants.FrameVariantTests.test_blue__right)
+blue: right; expect abstention. ... ok
+test_blue__right_top (test_frame_variants.FrameVariantTests.test_blue__right_top)
+blue: right, top; expect reconstruction. ... ok
+test_blue__top (test_frame_variants.FrameVariantTests.test_blue__top)
+blue: top; expect abstention. ... ok
+test_cyan__bottom (test_frame_variants.FrameVariantTests.test_cyan__bottom)
+cyan: bottom; expect abstention. ... ok
+test_cyan__bottom_right (test_frame_variants.FrameVariantTests.test_cyan__bottom_right)
+cyan: bottom, right; expect reconstruction. ... ok
+test_cyan__bottom_right_top (test_frame_variants.FrameVariantTests.test_cyan__bottom_right_top)
+cyan: bottom, right, top; expect reconstruction. ... ok
+test_cyan__bottom_top (test_frame_variants.FrameVariantTests.test_cyan__bottom_top)
+cyan: bottom, top; expect reconstruction. ... ok
+test_cyan__left (test_frame_variants.FrameVariantTests.test_cyan__left)
+cyan: left; expect abstention. ... ok
+test_cyan__left_bottom (test_frame_variants.FrameVariantTests.test_cyan__left_bottom)
+cyan: left, bottom; expect reconstruction. ... ok
+test_cyan__left_bottom_right (test_frame_variants.FrameVariantTests.test_cyan__left_bottom_right)
+cyan: left, bottom, right; expect reconstruction. ... ok
+test_cyan__left_bottom_right_top (test_frame_variants.FrameVariantTests.test_cyan__left_bottom_right_top)
+cyan: left, bottom, right, top; expect reconstruction. ... ok
+test_cyan__left_bottom_top (test_frame_variants.FrameVariantTests.test_cyan__left_bottom_top)
+cyan: left, bottom, top; expect reconstruction. ... ok
+test_cyan__left_right (test_frame_variants.FrameVariantTests.test_cyan__left_right)
+cyan: left, right; expect reconstruction. ... ok
+test_cyan__left_right_top (test_frame_variants.FrameVariantTests.test_cyan__left_right_top)
+cyan: left, right, top; expect reconstruction. ... ok
+test_cyan__left_top (test_frame_variants.FrameVariantTests.test_cyan__left_top)
+cyan: left, top; expect reconstruction. ... ok
+test_cyan__none (test_frame_variants.FrameVariantTests.test_cyan__none)
+cyan: no sides; expect abstention. ... ok
+test_cyan__right (test_frame_variants.FrameVariantTests.test_cyan__right)
+cyan: right; expect abstention. ... ok
+test_cyan__right_top (test_frame_variants.FrameVariantTests.test_cyan__right_top)
+cyan: right, top; expect reconstruction. ... ok
+test_cyan__top (test_frame_variants.FrameVariantTests.test_cyan__top)
+cyan: top; expect abstention. ... ok
+test_dark_green__bottom (test_frame_variants.FrameVariantTests.test_dark_green__bottom)
+dark_green: bottom; expect abstention. ... ok
+test_dark_green__bottom_right (test_frame_variants.FrameVariantTests.test_dark_green__bottom_right)
+dark_green: bottom, right; expect reconstruction. ... ok
+test_dark_green__bottom_right_top (test_frame_variants.FrameVariantTests.test_dark_green__bottom_right_top)
+dark_green: bottom, right, top; expect reconstruction. ... ok
+test_dark_green__bottom_top (test_frame_variants.FrameVariantTests.test_dark_green__bottom_top)
+dark_green: bottom, top; expect reconstruction. ... ok
+test_dark_green__left (test_frame_variants.FrameVariantTests.test_dark_green__left)
+dark_green: left; expect abstention. ... ok
+test_dark_green__left_bottom (test_frame_variants.FrameVariantTests.test_dark_green__left_bottom)
+dark_green: left, bottom; expect reconstruction. ... ok
+test_dark_green__left_bottom_right (test_frame_variants.FrameVariantTests.test_dark_green__left_bottom_right)
+dark_green: left, bottom, right; expect reconstruction. ... ok
+test_dark_green__left_bottom_right_top (test_frame_variants.FrameVariantTests.test_dark_green__left_bottom_right_top)
+dark_green: left, bottom, right, top; expect reconstruction. ... ok
+test_dark_green__left_bottom_top (test_frame_variants.FrameVariantTests.test_dark_green__left_bottom_top)
+dark_green: left, bottom, top; expect reconstruction. ... ok
+test_dark_green__left_right (test_frame_variants.FrameVariantTests.test_dark_green__left_right)
+dark_green: left, right; expect reconstruction. ... ok
+test_dark_green__left_right_top (test_frame_variants.FrameVariantTests.test_dark_green__left_right_top)
+dark_green: left, right, top; expect reconstruction. ... ok
+test_dark_green__left_top (test_frame_variants.FrameVariantTests.test_dark_green__left_top)
+dark_green: left, top; expect reconstruction. ... ok
+test_dark_green__none (test_frame_variants.FrameVariantTests.test_dark_green__none)
+dark_green: no sides; expect abstention. ... ok
+test_dark_green__right (test_frame_variants.FrameVariantTests.test_dark_green__right)
+dark_green: right; expect abstention. ... ok
+test_dark_green__right_top (test_frame_variants.FrameVariantTests.test_dark_green__right_top)
+dark_green: right, top; expect reconstruction. ... ok
+test_dark_green__top (test_frame_variants.FrameVariantTests.test_dark_green__top)
+dark_green: top; expect abstention. ... ok
+test_light_gray__bottom (test_frame_variants.FrameVariantTests.test_light_gray__bottom)
+light_gray: bottom; expect abstention. ... ok
+test_light_gray__bottom_right (test_frame_variants.FrameVariantTests.test_light_gray__bottom_right)
+light_gray: bottom, right; expect reconstruction. ... ok
+test_light_gray__bottom_right_top (test_frame_variants.FrameVariantTests.test_light_gray__bottom_right_top)
+light_gray: bottom, right, top; expect reconstruction. ... ok
+test_light_gray__bottom_top (test_frame_variants.FrameVariantTests.test_light_gray__bottom_top)
+light_gray: bottom, top; expect reconstruction. ... ok
+test_light_gray__left (test_frame_variants.FrameVariantTests.test_light_gray__left)
+light_gray: left; expect abstention. ... ok
+test_light_gray__left_bottom (test_frame_variants.FrameVariantTests.test_light_gray__left_bottom)
+light_gray: left, bottom; expect reconstruction. ... ok
+test_light_gray__left_bottom_right (test_frame_variants.FrameVariantTests.test_light_gray__left_bottom_right)
+light_gray: left, bottom, right; expect reconstruction. ... ok
+test_light_gray__left_bottom_right_top (test_frame_variants.FrameVariantTests.test_light_gray__left_bottom_right_top)
+light_gray: left, bottom, right, top; expect reconstruction. ... ok
+test_light_gray__left_bottom_top (test_frame_variants.FrameVariantTests.test_light_gray__left_bottom_top)
+light_gray: left, bottom, top; expect reconstruction. ... ok
+test_light_gray__left_right (test_frame_variants.FrameVariantTests.test_light_gray__left_right)
+light_gray: left, right; expect reconstruction. ... ok
+test_light_gray__left_right_top (test_frame_variants.FrameVariantTests.test_light_gray__left_right_top)
+light_gray: left, right, top; expect reconstruction. ... ok
+test_light_gray__left_top (test_frame_variants.FrameVariantTests.test_light_gray__left_top)
+light_gray: left, top; expect reconstruction. ... ok
+test_light_gray__none (test_frame_variants.FrameVariantTests.test_light_gray__none)
+light_gray: no sides; expect abstention. ... ok
+test_light_gray__right (test_frame_variants.FrameVariantTests.test_light_gray__right)
+light_gray: right; expect abstention. ... ok
+test_light_gray__right_top (test_frame_variants.FrameVariantTests.test_light_gray__right_top)
+light_gray: right, top; expect reconstruction. ... ok
+test_light_gray__top (test_frame_variants.FrameVariantTests.test_light_gray__top)
+light_gray: top; expect abstention. ... ok
+test_orange__bottom (test_frame_variants.FrameVariantTests.test_orange__bottom)
+orange: bottom; expect abstention. ... ok
+test_orange__bottom_right (test_frame_variants.FrameVariantTests.test_orange__bottom_right)
+orange: bottom, right; expect reconstruction. ... ok
+test_orange__bottom_right_top (test_frame_variants.FrameVariantTests.test_orange__bottom_right_top)
+orange: bottom, right, top; expect reconstruction. ... ok
+test_orange__bottom_top (test_frame_variants.FrameVariantTests.test_orange__bottom_top)
+orange: bottom, top; expect reconstruction. ... ok
+test_orange__left (test_frame_variants.FrameVariantTests.test_orange__left)
+orange: left; expect abstention. ... ok
+test_orange__left_bottom (test_frame_variants.FrameVariantTests.test_orange__left_bottom)
+orange: left, bottom; expect reconstruction. ... ok
+test_orange__left_bottom_right (test_frame_variants.FrameVariantTests.test_orange__left_bottom_right)
+orange: left, bottom, right; expect reconstruction. ... ok
+test_orange__left_bottom_right_top (test_frame_variants.FrameVariantTests.test_orange__left_bottom_right_top)
+orange: left, bottom, right, top; expect reconstruction. ... ok
+test_orange__left_bottom_top (test_frame_variants.FrameVariantTests.test_orange__left_bottom_top)
+orange: left, bottom, top; expect reconstruction. ... ok
+test_orange__left_right (test_frame_variants.FrameVariantTests.test_orange__left_right)
+orange: left, right; expect reconstruction. ... ok
+test_orange__left_right_top (test_frame_variants.FrameVariantTests.test_orange__left_right_top)
+orange: left, right, top; expect reconstruction. ... ok
+test_orange__left_top (test_frame_variants.FrameVariantTests.test_orange__left_top)
+orange: left, top; expect reconstruction. ... ok
+test_orange__none (test_frame_variants.FrameVariantTests.test_orange__none)
+orange: no sides; expect abstention. ... ok
+test_orange__right (test_frame_variants.FrameVariantTests.test_orange__right)
+orange: right; expect abstention. ... ok
+test_orange__right_top (test_frame_variants.FrameVariantTests.test_orange__right_top)
+orange: right, top; expect reconstruction. ... ok
+test_orange__top (test_frame_variants.FrameVariantTests.test_orange__top)
+orange: top; expect abstention. ... ok
+test_purple__bottom (test_frame_variants.FrameVariantTests.test_purple__bottom)
+purple: bottom; expect abstention. ... ok
+test_purple__bottom_right (test_frame_variants.FrameVariantTests.test_purple__bottom_right)
+purple: bottom, right; expect reconstruction. ... ok
+test_purple__bottom_right_top (test_frame_variants.FrameVariantTests.test_purple__bottom_right_top)
+purple: bottom, right, top; expect reconstruction. ... ok
+test_purple__bottom_top (test_frame_variants.FrameVariantTests.test_purple__bottom_top)
+purple: bottom, top; expect reconstruction. ... ok
+test_purple__left (test_frame_variants.FrameVariantTests.test_purple__left)
+purple: left; expect abstention. ... ok
+test_purple__left_bottom (test_frame_variants.FrameVariantTests.test_purple__left_bottom)
+purple: left, bottom; expect reconstruction. ... ok
+test_purple__left_bottom_right (test_frame_variants.FrameVariantTests.test_purple__left_bottom_right)
+purple: left, bottom, right; expect reconstruction. ... ok
+test_purple__left_bottom_right_top (test_frame_variants.FrameVariantTests.test_purple__left_bottom_right_top)
+purple: left, bottom, right, top; expect reconstruction. ... ok
+test_purple__left_bottom_top (test_frame_variants.FrameVariantTests.test_purple__left_bottom_top)
+purple: left, bottom, top; expect reconstruction. ... ok
+test_purple__left_right (test_frame_variants.FrameVariantTests.test_purple__left_right)
+purple: left, right; expect reconstruction. ... ok
+test_purple__left_right_top (test_frame_variants.FrameVariantTests.test_purple__left_right_top)
+purple: left, right, top; expect reconstruction. ... ok
+test_purple__left_top (test_frame_variants.FrameVariantTests.test_purple__left_top)
+purple: left, top; expect reconstruction. ... ok
+test_purple__none (test_frame_variants.FrameVariantTests.test_purple__none)
+purple: no sides; expect abstention. ... ok
+test_purple__right (test_frame_variants.FrameVariantTests.test_purple__right)
+purple: right; expect abstention. ... ok
+test_purple__right_top (test_frame_variants.FrameVariantTests.test_purple__right_top)
+purple: right, top; expect reconstruction. ... ok
+test_purple__top (test_frame_variants.FrameVariantTests.test_purple__top)
+purple: top; expect abstention. ... ok
+test_red__bottom (test_frame_variants.FrameVariantTests.test_red__bottom)
+red: bottom; expect abstention. ... ok
+test_red__bottom_right (test_frame_variants.FrameVariantTests.test_red__bottom_right)
+red: bottom, right; expect reconstruction. ... ok
+test_red__bottom_right_top (test_frame_variants.FrameVariantTests.test_red__bottom_right_top)
+red: bottom, right, top; expect reconstruction. ... ok
+test_red__bottom_top (test_frame_variants.FrameVariantTests.test_red__bottom_top)
+red: bottom, top; expect reconstruction. ... ok
+test_red__left (test_frame_variants.FrameVariantTests.test_red__left)
+red: left; expect abstention. ... ok
+test_red__left_bottom (test_frame_variants.FrameVariantTests.test_red__left_bottom)
+red: left, bottom; expect reconstruction. ... ok
+test_red__left_bottom_right (test_frame_variants.FrameVariantTests.test_red__left_bottom_right)
+red: left, bottom, right; expect reconstruction. ... ok
+test_red__left_bottom_right_top (test_frame_variants.FrameVariantTests.test_red__left_bottom_right_top)
+red: left, bottom, right, top; expect reconstruction. ... ok
+test_red__left_bottom_top (test_frame_variants.FrameVariantTests.test_red__left_bottom_top)
+red: left, bottom, top; expect reconstruction. ... ok
+test_red__left_right (test_frame_variants.FrameVariantTests.test_red__left_right)
+red: left, right; expect reconstruction. ... ok
+test_red__left_right_top (test_frame_variants.FrameVariantTests.test_red__left_right_top)
+red: left, right, top; expect reconstruction. ... ok
+test_red__left_top (test_frame_variants.FrameVariantTests.test_red__left_top)
+red: left, top; expect reconstruction. ... ok
+test_red__none (test_frame_variants.FrameVariantTests.test_red__none)
+red: no sides; expect abstention. ... ok
+test_red__right (test_frame_variants.FrameVariantTests.test_red__right)
+red: right; expect abstention. ... ok
+test_red__right_top (test_frame_variants.FrameVariantTests.test_red__right_top)
+red: right, top; expect reconstruction. ... ok
+test_red__top (test_frame_variants.FrameVariantTests.test_red__top)
+red: top; expect abstention. ... ok
+test_yellow__bottom (test_frame_variants.FrameVariantTests.test_yellow__bottom)
+yellow: bottom; expect abstention. ... ok
+test_yellow__bottom_right (test_frame_variants.FrameVariantTests.test_yellow__bottom_right)
+yellow: bottom, right; expect reconstruction. ... ok
+test_yellow__bottom_right_top (test_frame_variants.FrameVariantTests.test_yellow__bottom_right_top)
+yellow: bottom, right, top; expect reconstruction. ... ok
+test_yellow__bottom_top (test_frame_variants.FrameVariantTests.test_yellow__bottom_top)
+yellow: bottom, top; expect reconstruction. ... ok
+test_yellow__left (test_frame_variants.FrameVariantTests.test_yellow__left)
+yellow: left; expect abstention. ... ok
+test_yellow__left_bottom (test_frame_variants.FrameVariantTests.test_yellow__left_bottom)
+yellow: left, bottom; expect reconstruction. ... ok
+test_yellow__left_bottom_right (test_frame_variants.FrameVariantTests.test_yellow__left_bottom_right)
+yellow: left, bottom, right; expect reconstruction. ... ok
+test_yellow__left_bottom_right_top (test_frame_variants.FrameVariantTests.test_yellow__left_bottom_right_top)
+yellow: left, bottom, right, top; expect reconstruction. ... ok
+test_yellow__left_bottom_top (test_frame_variants.FrameVariantTests.test_yellow__left_bottom_top)
+yellow: left, bottom, top; expect reconstruction. ... ok
+test_yellow__left_right (test_frame_variants.FrameVariantTests.test_yellow__left_right)
+yellow: left, right; expect reconstruction. ... ok
+test_yellow__left_right_top (test_frame_variants.FrameVariantTests.test_yellow__left_right_top)
+yellow: left, right, top; expect reconstruction. ... ok
+test_yellow__left_top (test_frame_variants.FrameVariantTests.test_yellow__left_top)
+yellow: left, top; expect reconstruction. ... ok
+test_yellow__none (test_frame_variants.FrameVariantTests.test_yellow__none)
+yellow: no sides; expect abstention. ... ok
+test_yellow__right (test_frame_variants.FrameVariantTests.test_yellow__right)
+yellow: right; expect abstention. ... ok
+test_yellow__right_top (test_frame_variants.FrameVariantTests.test_yellow__right_top)
+yellow: right, top; expect reconstruction. ... ok
+test_yellow__top (test_frame_variants.FrameVariantTests.test_yellow__top)
+yellow: top; expect abstention. ... ok
+
+----------------------------------------------------------------------
+Ran 144 tests in 0.860s
+
+OK

@@ -1,0 +1,5 @@
+min_contrast,detected,left,top,right,bottom,visible_sides,inferred_sides
+0.02,True,85.5,35.0,442.0,287.5,left+bottom,top+right
+0.05,True,85.5,35.0,442.0,287.5,left+bottom,top+right
+0.1,True,85.5,35.0,442.0,287.5,left+bottom,top+right
+0.2,True,85.5,35.0,442.0,287.5,left+bottom,top+right
